@@ -120,8 +120,8 @@ instance : limits.has_zero_morphisms (quasicoherent_sheaf_of_module X) :=
     simp only [limits.zero_comp, AddCommGroup.zero_apply],
   end }.
 
-lemma is_quasicoherent.zero : (0 : sheaf_of_module X.presheaf).is_quasicoherent := λ x,
-⟨{ U := ⊤,
+lemma is_quasicoherent.zero : (0 : sheaf_of_module X.presheaf).is_quasicoherent := λ x, nonempty.intro
+{ U := ⊤,
   mem := trivial,
   I := punit,
   J := punit,
@@ -131,14 +131,27 @@ lemma is_quasicoherent.zero : (0 : sheaf_of_module X.presheaf).is_quasicoherent 
     refine (@@cancel_epi _ _ begin apply image_to_kernel_epi_of_epi_of_zero,
     end).mp h,
   end⟩⟩,
-  exact2 := infer_instance }⟩
-  
--- def binary_product (F G : quasicoherent_sheaf_of_module X) : quasicoherent_sheaf_of_module X :=
--- { sheaf := F.sheaf ⨯ G.sheaf,
---   is_quasicoherent := _ }
+  exact2 := infer_instance }.
 
--- example (F G : quasicoherent_sheaf_of_module X) : limits.has_binary_product F G :=
--- { exists_binary_product := _ }
+/--
+`R --f--> R^2 --g--> R ----> 0`
+`f a = (a, 0)`
+`g (a, b) = b`
+-/
+lemma is_quasicoherent.self : (sheaf_of_module.from_sheaf_of_ring ⟨X.presheaf, X.is_sheaf⟩).is_quasicoherent := λ x, nonempty.intro
+{ U := ⊤,
+  mem := trivial,
+  I := punit,
+  J := ulift bool,
+  f := category_theory.limits.pi.lift 
+    (λ b, match (ulift.down b) with
+    | tt := category_theory.limits.pi.π _ (punit.star)
+    | ff := 0
+    end),
+  g := category_theory.limits.pi.π _ (ulift.up false),
+  exact1 := sorry,
+  exact2 := sorry, }.
+
 
 end quasicoherent_sheaf_of_module
 
